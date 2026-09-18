@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NOVA AI</title><style>
+body{margin:0;background:#080b14;color:#eef2ff;font:16px Arial}.wrap{max-width:850px;margin:auto;min-height:100vh;display:flex;flex-direction:column;padding:0 16px}
+header{padding:22px 0;border-bottom:1px solid #252d40;font-weight:800}header span{color:#75e6ff}
+#chat{flex:1;padding:25px 0}.m{display:flex;gap:10px;margin:18px 0}.a{padding:10px;border-radius:12px;background:#182039}.b{padding:11px 14px;border-radius:13px;background:#111829;white-space:pre-wrap;line-height:1.55;max-width:75%}.u .b{background:#463263}
+form{display:flex;gap:8px;padding:15px 0;border-top:1px solid #252d40}input{flex:1;padding:14px;border-radius:12px;border:1px solid #34415e;background:#111829;color:#fff}button{padding:12px 16px;border:0;border-radius:12px;background:#75e6ff;color:#061019;font-weight:700}
+small{color:#707b94;text-align:center;padding-bottom:12px}
+</style></head><body><div class="wrap"><header>NOVA <span>AI</span></header><main id="chat"><div class="m"><div class="a">✦</div><div class="b">Hello! I’m NOVA AI. Ask me anything.</div></div></main>
+<form onsubmit="send(event)"><input id="q" placeholder="Message NOVA AI..." autocomplete="off"><button>Send</button></form><small>Your API key stays on the server.</small></div>
+<script>
+const chat=document.querySelector("#chat"),q=document.querySelector("#q"),history=[];
+function add(role,text){const m=document.createElement("div");m.className="m "+(role==="user"?"u":"");m.innerHTML='<div class="a">'+(role==="user"?"🙂":"✦")+'</div><div class="b"></div>';m.querySelector(".b").textContent=text;chat.appendChild(m);chat.scrollTop=chat.scrollHeight}
+async function send(e){e.preventDefault();const text=q.value.trim();if(!text)return;q.value="";add("user",text);history.push({role:"user",content:text});try{const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:history})});const d=await r.json();if(!r.ok)throw Error(d.error||"Request failed");add("assistant",d.text);history.push({role:"assistant",content:d.text})}catch(err){add("assistant","Sorry, the AI server is not available. Check your .env API key and server.");}}
+</script></body></html>
